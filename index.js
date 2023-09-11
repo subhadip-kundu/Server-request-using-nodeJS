@@ -1,6 +1,6 @@
 const http = require('http');
 
-const PORT = 9134;
+const PORT = 5000;
 const HOSTNAME = 'localhost';
 
 const server = http.createServer((req, res) => {
@@ -25,9 +25,26 @@ const server = http.createServer((req, res) => {
         res.end('Welcome to contact page!');
     }
     else if (req.url == '/product') {
-        res.statusCode = 200;
-        res.setHeader('Content-type', 'application/json');
-        res.end(JSON.stringify({ productName: 'Product 1' }));
+
+        const options = {
+            hostname: 'fakestoreapi.com',
+            path: '/products/1',
+            method: 'GET'
+        }
+
+        const apiReq = http.request(options, (apiRes) => {
+            apiRes.on("data", (data) => {
+                res.statusCode = 200;
+                res.setHeader('Content-type', 'application/json');
+                res.end(data.toString());
+            })
+        });
+
+        apiReq.on('error',()=>{
+            console.log(e);
+        });
+        
+        apiReq.end();
     }
     else {
         res.statusCode = 500;
